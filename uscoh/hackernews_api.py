@@ -1,6 +1,6 @@
-from hackernews import HackerNews
+#from hackernews import HackerNews
 
-hn = HackerNews()
+#hn = HackerNews()
 
-top_stories = hn.top_stories()
-print(top_stories)
+#top_stories = hn.top_stories()
+#print(top_stories)
