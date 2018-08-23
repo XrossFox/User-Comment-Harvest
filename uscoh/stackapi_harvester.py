@@ -1,6 +1,7 @@
 from stackapi import StackAPI
 import click
 import pickle
+import json
 
 
 @click.command()
@@ -13,17 +14,27 @@ import pickle
 @click.option('-v', type= click.IntRange(0,1, clamp=True), default=0,
               help="Modo verboso = 1, default es 0")
 def main(intext, tagged, output_path, p, s, v):
-    """Método main del script, requiere 6 parametros al ejecutarse desde linea de comandos:
-    intext: el texto a buscar en el cuerpo del texto.
-    tagged: los tags con los que esta marcada la pregunta
-    output_path: destino del archivo pickle"""
+    """Método main del script, requiere 6 parametros al ejecutarse desde linea de comandos:\n
+    intext: el texto a buscar en el cuerpo del texto.\n
+    tagged: los tags con los que esta marcada la pregunta.\n
+    output_path: destino del archivo .json"""
     
     if v: click.echo("Intext: {}. Tagged: {}. -p: {}. -s: {}".format(intext,tagged,p,s))
     
     response = fetch_stackapi(intext, tagged, p, s)
     dataset = maze_runner(response, v)
-    pickle_list(output_path, intext, tagged, dataset, v)
-    
+    #pickle_list(output_path, intext, tagged, dataset, v)
+    to_hdd(dataset, "{}_{}".format(intext,tagged), output_path)
+ 
+def to_hdd(comment_list, name, output_path):
+    """
+    Escribe un archivo json en formato json array desde una lista.
+    comment_list: lista a convertir a json.
+    name: nombre del archivo.
+    output_path: path del archivo de salida.
+    """
+    with open('{}\\{}.json'.format(output_path,name), 'w') as file:
+        json.dump(comment_list, file)  
   
 def fetch_stackapi(text, tags, page_size=1, max_pages=1):
     """Método que realiza la petición a la Stack API. Recibe:
@@ -125,7 +136,7 @@ def pickle_list(out_path, intext, tagged, dataset, verbose):
        verbose: modo verboso. """
        
        
-    with open(file="{}\\intex_{}-tagged_{}.txt".format(out_path, intext, tagged)
+    with open(file="{}\\intext_{}-tagged_{}.txt".format(out_path, intext, tagged)
               , mode="ab") as file:
         pickle.dump(dataset, file, pickle.HIGHEST_PROTOCOL)
     
